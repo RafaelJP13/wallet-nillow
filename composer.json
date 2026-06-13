@@ -16,6 +16,7 @@
         "livewire/livewire": "^4.3"
     },
     "require-dev": {
+        "dedoc/scramble": "^0.13.27",
         "fakerphp/faker": "^1.23",
         "laravel/breeze": "^2.4",
         "laravel/pail": "^1.2.5",
