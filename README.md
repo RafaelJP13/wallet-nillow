@@ -30,8 +30,8 @@ Carteira financeira com suporte a depósitos, transferências entre usuários e 
 ### 1. Clone e entre no projeto
 
 ```bash
-git clone <url-do-repositorio>
-cd wallet
+git clone https://github.com/RafaelJP13/wallet-nillow.git
+cd wallet-nillow
 ```
 
 ### 2. Copie o arquivo de ambiente
