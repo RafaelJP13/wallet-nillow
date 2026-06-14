@@ -2,26 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class WalletController extends Controller
 {
-    
-    function show(Request $request): JsonResponse
+    public function show(Request $request): JsonResponse
     {
-        $wallet = $request->user()->wallet;
-
-        if (! $wallet) {
-            return response()->json([
-                'message' => 'Wallet not found'
-            ], 404);
-        }
+        $wallet = $request
+            ->user()
+            ->wallet()
+            ->first();
 
         return response()->json([
-            'id' => $wallet->id,
-            'user_id' => $wallet->user_id,
-            'balance' => $wallet->balance,
+            'data' => $wallet,
         ]);
     }
 }
