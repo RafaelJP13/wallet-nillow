@@ -1,58 +1,152 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Wallet — Desafio Técnico 
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Carteira financeira com suporte a depósitos, transferências entre usuários e reversão de transações. Construída com **Laravel 13**, **Livewire** e **Laravel Sanctum**, com observabilidade via **Telescope** e documentação de API gerada automaticamente pelo **Scramble**.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Camada | Tecnologia |
+|---|---|
+| Backend |  Laravel 13 |
+| Frontend | Livewire  Tailwind CSS |
+| Autenticação | Laravel Breeze + Sanctum |
+| Banco de dados | MySQL (dev/test) |
+| Observabilidade | Laravel Telescope |
+| Documentação | Scramble (OpenAPI) |
+| Ambiente | Laravel Sail (Docker) |
+| Testes | PHPUnit  |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Pré-requisitos
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Docker Desktop rodando
+- Uso via `./vendor/bin/sail`
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Instalação
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 1. Clone e entre no projeto
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <url-do-repositorio>
+cd wallet
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Copie o arquivo de ambiente
 
-## Contributing
+```bash
+cp .env.example .env
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4. Suba o ambiente
 
-## Code of Conduct
+```bash
+`./vendor/bin/sail up -d`
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+./vendor/bin/sail artisan migrate
+```
 
-## Security Vulnerabilities
+### 7. (Opcional) Popule com dados de exemplo
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Cria um usuário com saldo inicial de R$ 1.000,00:
 
-## License
+```bash
+./vendor/bin/sail artisan db:seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Credenciais do usuário seed:
+- **Email:** `rafael@example.com`
+- **Senha:** `password`
+
+### 8. Instale e compile os assets
+
+```bash
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run build
+```
+
+---
+
+## Rodando o projeto
+
+```bash
+./vendor/bin/sail up -d
+```
+
+A aplicação estará disponível em **http://localhost**.
+
+Para acompanhar os logs em tempo real:
+
+```bash
+./vendor/bin/sail artisan pail
+```
+
+---
+
+## Testes
+
+```bash
+./vendor/bin/sail artisan test
+```
+
+---
+
+## Documentação da API
+
+Com o Sail rodando, acesse:
+
+```
+http://localhost/docs/api
+```
+
+A documentação é gerada automaticamente pelo Scramble a partir dos controllers e FormRequests.
+
+### Autenticação
+
+Todas as rotas da API exigem autenticação via **Sanctum**. Faça login pela interface web em `http://localhost/login` e use o cookie de sessão, ou gere um token via Tinker:
+
+### Endpoints disponíveis
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/wallet` | Saldo e dados da carteira |
+| `POST` | `/deposits` | Realizar um depósito |
+| `GET` | `/transactions` | Histórico de transações (paginado) |
+| `POST` | `/transactions` | Realizar uma transferência |
+| `GET` | `/transactions/{id}` | Detalhes de uma transação |
+| `POST` | `/transactions/{id}/reverse` | Reverter uma transação |
+
+---
+
+## Observabilidade
+
+O **Laravel Telescope** está habilitado em ambiente local. Acesse:
+
+```
+http://localhost/telescope
+```
+
+Monitora requisições, queries SQL, jobs, exceptions e logs em tempo real.
+
+---
+
+## Arquitetura
+
+```
+app/
+├── Enums/                  # TransactionType, TransactionStatus
+├── Http/
+│   ├── Controllers/        # Controllers finos, sem lógica de negócio
+│   └── Requests/           # Validação e autorização via FormRequest
+├── Livewire/Wallet/        # Componentes interativos do frontend
+├── Models/                 # Eloquent: User, Wallet, Transaction, ...
+├── Observers/              # UserObserver: cria wallet ao registrar usuário
+├── Repositories/           # Acesso a dados com interfaces e implementações
+├── Services/               # Regras de negócio: DepositService, TransactionService
+└── Providers/
+    └── AppServiceProvider  # Bind de interfaces → implementações (DI)
+```
