@@ -46,6 +46,10 @@ cp .env.example .env
 ./vendor/bin/sail up -d
 ```
 
+A aplicação estará disponível em **http://localhost**.
+
+### 4. Rode as migrations
+
 ```bash
 ./vendor/bin/sail artisan migrate
 ```
@@ -70,14 +74,6 @@ Credenciais do usuário seed:
 ```
 
 ---
-
-## Rodando o projeto
-
-```bash
-./vendor/bin/sail up -d
-```
-
-A aplicação estará disponível em **http://localhost**.
 
 Para acompanhar os logs em tempo real:
 
