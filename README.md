@@ -43,7 +43,7 @@ cp .env.example .env
 ### 4. Suba o ambiente
 
 ```bash
-`./vendor/bin/sail up -d`
+./vendor/bin/sail up -d
 ```
 
 ```bash
