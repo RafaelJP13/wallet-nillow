@@ -15,11 +15,14 @@ use App\Services\Contracts\TransactionServiceInterface;
 use App\Services\DepositService;
 use App\Services\TransactionService;
 use Illuminate\Support\ServiceProvider;
+use App\Models\User;
+use App\Observers\UserObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+
         $this->app->bind(
             WalletRepositoryInterface::class,
             WalletRepository::class
@@ -49,5 +52,10 @@ class AppServiceProvider extends ServiceProvider
             TransactionServiceInterface::class,
             TransactionService::class
         );
+    }
+
+    public function boot(): void
+    {
+        User::observe(UserObserver::class);
     }
 }
