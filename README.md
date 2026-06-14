@@ -41,7 +41,7 @@ cd wallet-nillow
 ```
 
 
-#### use o CLI do WSL2 para os próximos comandos
+### Use o CLI do WSL2 para os próximos comandos
 
 
 ### Copie o arquivo de ambiente
