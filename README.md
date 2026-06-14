@@ -31,7 +31,6 @@ Carteira financeira com suporte a depósitos, transferências entre usuários e 
 
 ```bash
 git clone https://github.com/RafaelJP13/wallet-nillow.git
-cd wallet-nillow
 ```
 
 ### Copie o arquivo de ambiente
@@ -40,10 +39,11 @@ cd wallet-nillow
 cp .env.example .env
 ```
 
-### Mova a Wallet para a pasta compartilhada do WSL2 pessoal
+### Mova a Wallet Nillow para a pasta compartilhada do WSL2 pessoal
 
 ```bash
 \\wsl$\Ubuntu\home\rafa\projects\wallet-nillow
+cd wallet-nillow
 ```
 
 ### use o CLI do WSL2 para os próximos comandos
