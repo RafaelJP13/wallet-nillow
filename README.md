@@ -40,13 +40,15 @@ cd wallet-nillow
 cp .env.example .env
 ```
 
-### Mova o Wallet para a pasta compartilhada do WSL2 pessoal
+### Mova a Wallet para a pasta compartilhada do WSL2 pessoal
 
 ```bash
 \\wsl$\Ubuntu\home\rafa\projects\wallet-nillow
 ```
 
-### 4. Suba o ambiente
+### use o CLI do WSL2 para os próximos comandos
+
+### Suba o ambiente
 
 ```bash
 ./vendor/bin/sail up -d
