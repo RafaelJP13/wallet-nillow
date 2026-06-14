@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TransferRequest;
+use App\Http\Requests\TransactionRequest;
 use App\Models\Transaction;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Services\Contracts\TransactionServiceInterface;
@@ -29,11 +29,11 @@ class TransactionController extends Controller
     }
 
     public function store(
-        TransferRequest $request
+        TransactionRequest $request
     ): JsonResponse {
         $transaction = $this->transactionService->transfer(
             fromWalletId: $request->user()->wallet->id,
-            toWalletId: $request->validated('wallet_id'),
+            toWalletId: $request->validated('to_wallet_id'),
             amount: $request->validated('amount')
         );
 
