@@ -129,6 +129,27 @@ class TransactionServiceReverseDepositTest extends TestCase
             );
     }
 
+    public function test_should_not_reverse_deposit_when_user_is_not_receiver(): void
+    {
+        $receiver = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $transaction = app(DepositService::class)
+            ->execute(
+                walletId: $receiver->wallet->id,
+                amount: 100
+            );
+
+        $this->expectException(DomainException::class);
+
+        app(TransactionService::class)
+            ->reverse(
+                transactionId: $transaction->id,
+                reversedBy: $otherUser->id,
+                reason: 'Mistake'
+            );
+    }
+
     public function test_should_throw_exception_when_transaction_not_found(): void
     {
         $this->expectException(ModelNotFoundException::class);
