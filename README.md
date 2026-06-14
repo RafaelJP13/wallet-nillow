@@ -33,6 +33,20 @@ Carteira financeira com suporte a depósitos, transferências entre usuários e 
 git clone https://github.com/RafaelJP13/wallet-nillow.git
 ```
 
+### Instalar dependências
+
+```bash
+composer install
+```
+### Instale e compile os assets
+
+```bash
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run build
+```
+
+---
+
 ### Copie o arquivo de ambiente
 
 ```bash
@@ -79,14 +93,7 @@ Credenciais do usuário seed:
 - **Email:** `rafael@example.com`
 - **Senha:** `password`
 
-### 8. Instale e compile os assets
-
-```bash
-./vendor/bin/sail npm install
-./vendor/bin/sail npm run build
-```
-
----
+---]
 
 ## Testes
 
