@@ -48,7 +48,6 @@ class DepositServiceTest extends TestCase
         $user = User::factory()->create();
 
         $wallet = $user->wallet;
-        $wallet->update(['balance' => 0]);
 
         $transaction = app(DepositService::class)
             ->execute(
@@ -59,8 +58,16 @@ class DepositServiceTest extends TestCase
         $this->assertDatabaseHas('transactions', [
             'id' => $transaction->id,
             'to_wallet_id' => $wallet->id,
+            'type' => TransactionType::DEPOSIT,
             'amount' => 100,
+            'status' => TransactionStatus::COMPLETED,
+            'description' => 'Deposit',
         ]);
+
+        $this->assertEquals(
+            $wallet->id,
+            $transaction->to_wallet_id
+        );
 
         $this->assertEquals(
             TransactionType::DEPOSIT,
@@ -70,6 +77,11 @@ class DepositServiceTest extends TestCase
         $this->assertEquals(
             TransactionStatus::COMPLETED,
             $transaction->status
+        );
+
+        $this->assertEquals(
+            'Deposit',
+            $transaction->description
         );
     }
 
@@ -104,6 +116,12 @@ class DepositServiceTest extends TestCase
             150,
             $detail->balance_after
         );
+
+        $this->assertDatabaseHas('transaction_details', [
+            'transaction_id' => $transaction->id,
+            'balance_before' => 100,
+            'balance_after' => 150,
+        ]);
     }
 
     public function test_should_deposit_into_negative_balance(): void
@@ -159,5 +177,33 @@ class DepositServiceTest extends TestCase
                 walletId: 999999,
                 amount: 100
             );
+    }
+
+    public function test_should_return_created_transaction(): void
+    {
+        $user = User::factory()->create();
+
+        $wallet = $user->wallet;
+
+        $transaction = app(DepositService::class)
+            ->execute(
+                walletId: $wallet->id,
+                amount: 100
+            );
+
+        $this->assertInstanceOf(
+            Transaction::class,
+            $transaction
+        );
+
+        $this->assertEquals(
+            TransactionType::DEPOSIT,
+            $transaction->type
+        );
+
+        $this->assertEquals(
+            TransactionStatus::COMPLETED,
+            $transaction->status
+        );
     }
 }
