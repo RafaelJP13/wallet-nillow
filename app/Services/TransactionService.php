@@ -87,20 +87,30 @@ class TransactionService implements TransactionServiceInterface
 
             if ($transaction->reversal) {
                 throw new DomainException(
-                    'Transaction already reversed.'
+                    'Transação já foi revertida.'
+                );
+            }
+
+            $receiverWallet = Wallet::query()
+                ->lockForUpdate()
+                ->findOrFail($transaction->to_wallet_id);
+
+            if ($receiverWallet->user_id !== $reversedBy) {
+                throw new DomainException(
+                    'Apenas o destinatário da transação pode fazer a reversão.'
+                );
+            }
+
+            if ($receiverWallet->balance < $transaction->amount) {
+                throw new DomainException(
+                    'Saldo recebido insuficiente para reverter esta transação.'
                 );
             }
 
             if (
                 $transaction->type === TransactionType::DEPOSIT
             ) {
-                $wallet = Wallet::query()
-                    ->lockForUpdate()
-                    ->findOrFail(
-                        $transaction->to_wallet_id
-                    );
-
-                $wallet->decrement(
+                $receiverWallet->decrement(
                     'balance',
                     $transaction->amount
                 );
@@ -115,13 +125,7 @@ class TransactionService implements TransactionServiceInterface
                         $transaction->from_wallet_id
                     );
 
-                $toWallet = Wallet::query()
-                    ->lockForUpdate()
-                    ->findOrFail(
-                        $transaction->to_wallet_id
-                    );
-
-                $toWallet->decrement(
+                $receiverWallet->decrement(
                     'balance',
                     $transaction->amount
                 );
