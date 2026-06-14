@@ -41,8 +41,14 @@ cd wallet-nillow
 ```
 
 
+
 ### Use o CLI do WSL2 para os próximos comandos
 
+### Suba o ambiente
+
+```bash
+./vendor/bin/sail up -d
+```
 
 ### Copie o arquivo de ambiente
 
@@ -62,12 +68,6 @@ composer install
 ```
 
 ---
-
-### Suba o ambiente
-
-```bash
-./vendor/bin/sail up -d
-```
 
 ### Rode as migrations
 
