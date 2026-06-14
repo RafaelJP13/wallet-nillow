@@ -2,19 +2,23 @@
 
 namespace App\Models;
 
+use App\Enums\TransactionStatus;
+use App\Enums\TransactionType;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
+#[Fillable([
+    'from_wallet_id',
+    'to_wallet_id',
+    'type',
+    'amount',
+    'status',
+    'description',
+])]
 class Transaction extends Model
 {
-    protected $fillable = [
-        'from_wallet_id',
-        'to_wallet_id',
-        'type',
-        'amount',
-        'status',
-        'description',
-    ];
-
     protected function casts(): array
     {
         return [
@@ -23,7 +27,8 @@ class Transaction extends Model
             'status' => TransactionStatus::class,
         ];
     }
-    function fromWallet()
+
+    public function fromWallet(): BelongsTo
     {
         return $this->belongsTo(
             Wallet::class,
@@ -31,7 +36,7 @@ class Transaction extends Model
         );
     }
 
-    function toWallet()
+    public function toWallet(): BelongsTo
     {
         return $this->belongsTo(
             Wallet::class,
@@ -39,14 +44,14 @@ class Transaction extends Model
         );
     }
 
-    function reversal()
+    public function reversal(): HasOne
     {
         return $this->hasOne(
             TransactionReversal::class
         );
     }
 
-    function detail()
+    public function detail(): HasOne
     {
         return $this->hasOne(
             TransactionDetail::class

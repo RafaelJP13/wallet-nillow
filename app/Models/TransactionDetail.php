@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Timestamps;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[Timestamps(false)]
+#[Fillable([
+    'transaction_id',
+    'balance_before',
+    'balance_after',
+])]
 class TransactionDetail extends Model
 {
-    public $timestamps = false;
-
-    protected $fillable = [
-        'transaction_id',
-        'balance_before',
-        'balance_after',
-    ];
-
     protected function casts(): array
     {
         return [
@@ -22,7 +23,7 @@ class TransactionDetail extends Model
         ];
     }
 
-    function transaction()
+    public function transaction(): BelongsTo
     {
         return $this->belongsTo(
             Transaction::class
