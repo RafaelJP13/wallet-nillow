@@ -3,7 +3,6 @@
 namespace Tests\Unit\Services;
 
 use App\Models\User;
-use App\Models\Wallet;
 use App\Services\TransactionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -15,18 +14,15 @@ class TransactionServiceReverseTransferTest extends TestCase
     public function test_should_reverse_transfer(): void
     {
         $sender = User::factory()->create();
-
         $receiver = User::factory()->create();
 
-        $senderWallet = Wallet::create([
-            'user_id' => $sender->id,
-            'balance' => 1000,
-        ]);
+        // usa wallets criadas pelo Observer (evita duplicação e erro UNIQUE)
+        $senderWallet = $sender->wallet;
+        $receiverWallet = $receiver->wallet;
 
-        $receiverWallet = Wallet::create([
-            'user_id' => $receiver->id,
-            'balance' => 0,
-        ]);
+        // estado inicial controlado
+        $senderWallet->update(['balance' => 1000]);
+        $receiverWallet->update(['balance' => 0]);
 
         $service = app(TransactionService::class);
 

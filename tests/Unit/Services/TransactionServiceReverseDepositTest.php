@@ -3,7 +3,6 @@
 namespace Tests\Unit\Services;
 
 use App\Models\User;
-use App\Models\Wallet;
 use App\Services\DepositService;
 use App\Services\TransactionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,14 +16,13 @@ class TransactionServiceReverseDepositTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $wallet = Wallet::create([
-            'user_id' => $user->id,
-            'balance' => 100,
-        ]);
+        // usa wallet criada pelo Observer (evita duplicação e UNIQUE constraint)
+        $wallet = $user->wallet;
 
-        $depositService = app(
-            DepositService::class
-        );
+        // estado controlado
+        $wallet->update(['balance' => 100]);
+
+        $depositService = app(DepositService::class);
 
         $transaction = $depositService->execute(
             walletId: $wallet->id,

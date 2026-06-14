@@ -7,7 +7,6 @@ use App\Enums\TransactionType;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
 use App\Models\User;
-use App\Models\Wallet;
 use App\Services\DepositService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,10 +20,8 @@ class DepositServiceTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $wallet = Wallet::create([
-            'user_id' => $user->id,
-            'balance' => 100,
-        ]);
+        $wallet = $user->wallet;
+        $wallet->update(['balance' => 100]);
 
         $service = app(DepositService::class);
 
@@ -50,10 +47,8 @@ class DepositServiceTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $wallet = Wallet::create([
-            'user_id' => $user->id,
-            'balance' => 0,
-        ]);
+        $wallet = $user->wallet;
+        $wallet->update(['balance' => 0]);
 
         $transaction = app(DepositService::class)
             ->execute(
@@ -82,10 +77,8 @@ class DepositServiceTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $wallet = Wallet::create([
-            'user_id' => $user->id,
-            'balance' => 100,
-        ]);
+        $wallet = $user->wallet;
+        $wallet->update(['balance' => 100]);
 
         $transaction = app(DepositService::class)
             ->execute(
@@ -117,10 +110,8 @@ class DepositServiceTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $wallet = Wallet::create([
-            'user_id' => $user->id,
-            'balance' => -50,
-        ]);
+        $wallet = $user->wallet;
+        $wallet->update(['balance' => -50]);
 
         app(DepositService::class)
             ->execute(
@@ -140,10 +131,8 @@ class DepositServiceTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $wallet = Wallet::create([
-            'user_id' => $user->id,
-            'balance' => 100,
-        ]);
+        $wallet = $user->wallet;
+        $wallet->update(['balance' => 100]);
 
         app(DepositService::class)
             ->execute(

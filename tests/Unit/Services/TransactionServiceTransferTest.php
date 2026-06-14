@@ -4,8 +4,8 @@ namespace Tests\Unit\Services;
 
 use App\Models\Transaction;
 use App\Models\User;
-use App\Models\Wallet;
 use App\Services\TransactionService;
+use DomainException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,18 +16,15 @@ class TransactionServiceTransferTest extends TestCase
     public function test_should_transfer_money_between_wallets(): void
     {
         $sender = User::factory()->create();
-
         $receiver = User::factory()->create();
 
-        $senderWallet = Wallet::create([
-            'user_id' => $sender->id,
-            'balance' => 500,
-        ]);
+        // usa wallet criada automaticamente pelo Observer
+        $senderWallet = $sender->wallet;
+        $receiverWallet = $receiver->wallet;
 
-        $receiverWallet = Wallet::create([
-            'user_id' => $receiver->id,
-            'balance' => 100,
-        ]);
+        // estado controlado do teste
+        $senderWallet->update(['balance' => 500]);
+        $receiverWallet->update(['balance' => 100]);
 
         $service = app(TransactionService::class);
 
@@ -63,19 +60,17 @@ class TransactionServiceTransferTest extends TestCase
         );
 
         $sender = User::factory()->create();
-
         $receiver = User::factory()->create();
 
-        $senderWallet = Wallet::create([
-            'user_id' => $sender->id,
-            'balance' => 50,
-        ]);
+        // usa wallet do Observer (sem duplicar insert)
+        $senderWallet = $sender->wallet;
+        $receiverWallet = $receiver->wallet;
 
-        $receiverWallet = Wallet::create([
-            'user_id' => $receiver->id,
-            'balance' => 0,
-        ]);
+        // estado controlado
+        $senderWallet->update(['balance' => 50]);
+        $receiverWallet->update(['balance' => 0]);
 
+        /** @var TransactionService $service */
         $service = app(TransactionService::class);
 
         $service->transfer(
