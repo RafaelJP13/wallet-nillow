@@ -27,17 +27,23 @@ Carteira financeira com suporte a depósitos, transferências entre usuários e 
 
 ## Instalação
 
-### 1. Clone e entre no projeto
+### Clone e entre no projeto
 
 ```bash
 git clone https://github.com/RafaelJP13/wallet-nillow.git
 cd wallet-nillow
 ```
 
-### 2. Copie o arquivo de ambiente
+### Copie o arquivo de ambiente
 
 ```bash
 cp .env.example .env
+```
+
+### Mova o Wallet para a pasta compartilhada do WSL2 pessoal
+
+```bash
+\\wsl$\Ubuntu\home\rafa\projects\wallet-nillow
 ```
 
 ### 4. Suba o ambiente
@@ -46,15 +52,20 @@ cp .env.example .env
 ./vendor/bin/sail up -d
 ```
 
-A aplicação estará disponível em **http://localhost**.
-
-### 4. Rode as migrations
+### Rode as migrations
 
 ```bash
 ./vendor/bin/sail artisan migrate
 ```
 
-### 7. (Opcional) Popule com dados de exemplo
+### Abra a IDE
+
+```bash
+code .
+```
+A aplicação estará disponível em **http://localhost**.
+
+### (Opcional) Popule com dados de exemplo
 
 Cria um usuário com saldo inicial de R$ 1.000,00:
 
@@ -71,14 +82,6 @@ Credenciais do usuário seed:
 ```bash
 ./vendor/bin/sail npm install
 ./vendor/bin/sail npm run build
-```
-
----
-
-Para acompanhar os logs em tempo real:
-
-```bash
-./vendor/bin/sail artisan pail
 ```
 
 ---
