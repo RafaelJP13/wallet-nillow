@@ -14,7 +14,6 @@ class ReverseTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'transaction_id' => ['required', 'integer', 'exists:transactions,id'],
             'reason' => ['nullable', 'string', 'max:255'],
         ];
     }
