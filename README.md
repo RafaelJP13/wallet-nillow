@@ -64,7 +64,6 @@ composer install
 
 ```bash
 ./vendor/bin/sail npm install
-./vendor/bin/sail npm run build
 ```
 
 ---
