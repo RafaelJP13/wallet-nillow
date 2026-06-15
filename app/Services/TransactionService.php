@@ -68,7 +68,7 @@ class TransactionService implements TransactionServiceInterface
                     'type' => TransactionType::TRANSFER,
                     'amount' => $amount,
                     'status' => TransactionStatus::COMPLETED,
-                    'description' => 'Transfer',
+                    'description' => TransactionType::TRANSFER,
                 ]);
 
             $this->transactionDetailRepository
