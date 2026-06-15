@@ -159,6 +159,12 @@ O **Laravel Telescope** está habilitado em ambiente local. Acesse:
 http://localhost/telescope
 ```
 
+O **PHPMyAdmin** está habilitado em ambiente local. Acesse:
+
+```
+http://localhost:8080
+```
+
 Monitora requisições, queries SQL, jobs, exceptions e logs em tempo real.
 
 ---
