@@ -41,7 +41,7 @@ class TransactionService implements TransactionServiceInterface
 
             if ($fromWallet->balance < $amount) {
                 throw new DomainException(
-                    'Insufficient balance.'
+                    'Saldo Insuficiente para realizar a transferência.'
                 );
             }
 
