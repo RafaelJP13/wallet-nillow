@@ -20,7 +20,7 @@ class DepositService implements DepositServiceInterface
             $walletId,
             $amount
         ) {
-            $wallet = Wallet::query()->findOrFail($walletId);
+            $wallet = Wallet::query()->lockForUpdate()->findOrFail($walletId);
 
             $balanceBefore = $wallet->balance;
 

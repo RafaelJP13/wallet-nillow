@@ -16,7 +16,7 @@ class TransactionRequest extends FormRequest
         return [
             'from_wallet_id' => ['nullable', 'integer', 'exists:wallets,id'],
             'to_wallet_id'   => ['required', 'integer', 'exists:wallets,id'],
-            'type'           => ['required', 'string', 'in:deposit,withdraw,transfer,reversal'],
+            'type'           => ['required', 'string', 'in:deposito,saque,transferência,estorno'],
             'amount'         => ['required', 'numeric', 'min:0.01'],
             'description'    => ['nullable', 'string', 'max:255'],
         ];
