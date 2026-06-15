@@ -54,7 +54,7 @@ cd wallet-nillow
 ```bash
 composer install
 npm install
-
+npm run build
 ```
 ---
 
