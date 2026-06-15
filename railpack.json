@@ -1,0 +1,4 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "buildAptPackages": ["php8.4-bcmath"]
+}
