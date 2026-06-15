@@ -4,6 +4,8 @@ namespace App\Enums;
 
 enum TransactionType: string
 {
-    case DEPOSIT = 'deposit';
-    case TRANSFER = 'transfer';
+    case DEPOSIT = 'deposito';
+    case WITHDRAW = 'saque';
+    case TRANSFER = 'transferência';
+    case REVERSAL = 'estorno';
 }
