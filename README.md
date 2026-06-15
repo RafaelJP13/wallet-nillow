@@ -58,12 +58,6 @@ npm install
 ```
 ---
 
-### Suba o ambiente
-
-```bash
-./vendor/bin/sail up -d
-```
-
 ### Copie o arquivo de ambiente
 
 ```bash
@@ -79,6 +73,13 @@ DB_USERNAME=teste
 DB_PASSWORD=teste
 ```
 
+---
+
+### Suba o ambiente
+
+```bash
+./vendor/bin/sail up -d
+```
 ---
 
 ### Rode as migrations
