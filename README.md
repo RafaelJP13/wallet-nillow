@@ -100,7 +100,7 @@ DB_PASSWORD=teste
 ```bash
 code .
 ```
-A aplicação estará disponível em **http://localhost**.
+A aplicação estará disponível em <a href="http://localhost" target="_blank">http://localhost</a>.
 
 ### (Opcional) Popule com dados de exemplo
 
