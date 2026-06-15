@@ -25,7 +25,7 @@ class ReversalController extends Controller
         );
 
         return response()->json([
-            'message' => 'Transaction reversed successfully.',
+            'message' => 'Transação estornada com sucesso.',
             'data' => $transaction,
         ]);
     }

@@ -45,7 +45,7 @@ class TransferForm extends Component
         } catch (Throwable) {
             $this->addError(
                 'amount',
-                'Nao foi possivel concluir a transferencia.'
+                'Não foi possivel concluir a transferência.'
             );
 
             return;
@@ -53,7 +53,7 @@ class TransferForm extends Component
 
         $this->reset(['toWalletId', 'amount']);
         $this->dispatch('wallet-updated');
-        session()->flash('wallet-status', 'Transferencia enviada com sucesso.');
+        session()->flash('wallet-status', 'Transferência enviada com sucesso.');
     }
 
     public function render()

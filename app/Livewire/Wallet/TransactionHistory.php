@@ -69,7 +69,7 @@ class TransactionHistory extends Component
 
         $this->reset(['reversingTransactionId', 'reason']);
         $this->dispatch('wallet-updated');
-        session()->flash('wallet-status', 'Transacao revertida com sucesso.');
+        session()->flash('wallet-status', 'Transacão estornada com sucesso.');
     }
 
     public function render()

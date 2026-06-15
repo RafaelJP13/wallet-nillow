@@ -22,7 +22,7 @@ class DepositController extends Controller
         );
 
         return response()->json([
-            'message' => 'Deposit completed successfully.',
+            'message' => 'Deposito feito com sucesso.',
             'data' => $transaction,
         ], 201);
     }
