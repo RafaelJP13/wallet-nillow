@@ -55,6 +55,16 @@ cd wallet-nillow
 ```bash
 cp .env.example .env
 ```
+
+```bash
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=teste
+DB_USERNAME=teste
+DB_PASSWORD=teste
+```
+
 ### Instalar dependências
 
 ```bash
