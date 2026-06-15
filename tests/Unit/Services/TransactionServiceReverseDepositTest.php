@@ -8,7 +8,6 @@ use App\Services\DepositService;
 use App\Services\TransactionService;
 use DomainException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Tests\TestCase;
 
 class TransactionServiceReverseDepositTest extends TestCase
@@ -19,18 +18,17 @@ class TransactionServiceReverseDepositTest extends TestCase
     {
         $user = User::factory()->create();
 
-        // usa wallet criada pelo Observer (evita duplicação e UNIQUE constraint)
         $wallet = $user->wallet;
 
-        // estado controlado
-        $wallet->update(['balance' => 100]);
+        $wallet->update([
+            'balance' => 100,
+        ]);
 
-        $depositService = app(DepositService::class);
-
-        $transaction = $depositService->execute(
-            walletId: $wallet->id,
-            amount: 50
-        );
+        $transaction = app(DepositService::class)
+            ->execute(
+                walletId: $wallet->id,
+                amount: 50
+            );
 
         app(TransactionService::class)
             ->reverse(
@@ -152,7 +150,10 @@ class TransactionServiceReverseDepositTest extends TestCase
 
     public function test_should_throw_exception_when_transaction_not_found(): void
     {
-        $this->expectException(ModelNotFoundException::class);
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage(
+            'Transaction not found.'
+        );
 
         app(TransactionService::class)
             ->reverse(
@@ -169,7 +170,7 @@ class TransactionServiceReverseDepositTest extends TestCase
         $wallet = $user->wallet;
 
         $wallet->update([
-            'balance' => 500
+            'balance' => 500,
         ]);
 
         $transaction = app(DepositService::class)
@@ -198,5 +199,34 @@ class TransactionServiceReverseDepositTest extends TestCase
             500,
             $wallet->balance
         );
+    }
+
+    public function test_should_not_reverse_deposit_when_receiver_has_insufficient_balance(): void
+    {
+        $user = User::factory()->create();
+
+        $wallet = $user->wallet;
+
+        $transaction = app(DepositService::class)
+            ->execute(
+                walletId: $wallet->id,
+                amount: 100
+            );
+
+        $wallet->update([
+            'balance' => 50,
+        ]);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage(
+            'Saldo recebido insuficiente para reverter esta transação.'
+        );
+
+        app(TransactionService::class)
+            ->reverse(
+                transactionId: $transaction->id,
+                reversedBy: $user->id,
+                reason: 'Erro'
+            );
     }
 }

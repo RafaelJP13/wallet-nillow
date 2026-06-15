@@ -19,8 +19,36 @@ class WalletRepository implements WalletRepositoryInterface
             ->first();
     }
 
-    public function save(Wallet $wallet): bool
+    public function findForUpdate(int $id): Wallet
     {
+        return Wallet::query()
+            ->lockForUpdate()
+            ->findOrFail($id);
+    }
+
+    public function incrementBalance(
+        Wallet $wallet,
+        float $amount
+    ): void {
+        $wallet->increment(
+            'balance',
+            $amount
+        );
+    }
+
+    public function decrementBalance(
+        Wallet $wallet,
+        float $amount
+    ): void {
+        $wallet->decrement(
+            'balance',
+            $amount
+        );
+    }
+
+    public function save(
+        Wallet $wallet
+    ): bool {
         return $wallet->save();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\TransactionStatus;
 use App\Models\Transaction;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -25,8 +26,26 @@ class TransactionRepository implements TransactionRepositoryInterface
             ->find($id);
     }
 
-    public function save(Transaction $transaction): bool
-    {
+    public function findByIdWithReversal(
+        int $id
+    ): ?Transaction {
+        return Transaction::query()
+            ->with('reversal')
+            ->find($id);
+    }
+
+    public function updateStatus(
+        Transaction $transaction,
+        TransactionStatus $status
+    ): bool {
+        return $transaction->update([
+            'status' => $status,
+        ]);
+    }
+
+    public function save(
+        Transaction $transaction
+    ): bool {
         return $transaction->save();
     }
 

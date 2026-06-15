@@ -5,15 +5,24 @@ namespace App\Services;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Models\Transaction;
-use App\Models\TransactionDetail;
-use App\Models\TransactionReversal;
-use App\Models\Wallet;
+use App\Repositories\Contracts\TransactionDetailRepositoryInterface;
+use App\Repositories\Contracts\TransactionRepositoryInterface;
+use App\Repositories\Contracts\TransactionReversalRepositoryInterface;
+use App\Repositories\Contracts\WalletRepositoryInterface;
 use App\Services\Contracts\TransactionServiceInterface;
 use DomainException;
 use Illuminate\Support\Facades\DB;
 
 class TransactionService implements TransactionServiceInterface
 {
+    public function __construct(
+        private readonly WalletRepositoryInterface $walletRepository,
+        private readonly TransactionRepositoryInterface $transactionRepository,
+        private readonly TransactionDetailRepositoryInterface $transactionDetailRepository,
+        private readonly TransactionReversalRepositoryInterface $transactionReversalRepository,
+    ) {
+    }
+
     public function transfer(
         int $fromWalletId,
         int $toWalletId,
@@ -24,13 +33,11 @@ class TransactionService implements TransactionServiceInterface
             $toWalletId,
             $amount
         ) {
-            $fromWallet = Wallet::query()
-                ->lockForUpdate()
-                ->findOrFail($fromWalletId);
+            $fromWallet = $this->walletRepository
+                ->findForUpdate($fromWalletId);
 
-            $toWallet = Wallet::query()
-                ->lockForUpdate()
-                ->findOrFail($toWalletId);
+            $toWallet = $this->walletRepository
+                ->findForUpdate($toWalletId);
 
             if ($fromWallet->balance < $amount) {
                 throw new DomainException(
@@ -40,32 +47,36 @@ class TransactionService implements TransactionServiceInterface
 
             $balanceBefore = $fromWallet->balance;
 
-            $fromWallet->decrement(
-                'balance',
-                $amount
-            );
+            $this->walletRepository
+                ->decrementBalance(
+                    $fromWallet,
+                    $amount
+                );
 
-            $toWallet->increment(
-                'balance',
-                $amount
-            );
+            $this->walletRepository
+                ->incrementBalance(
+                    $toWallet,
+                    $amount
+                );
 
             $fromWallet->refresh();
 
-            $transaction = Transaction::create([
-                'from_wallet_id' => $fromWallet->id,
-                'to_wallet_id' => $toWallet->id,
-                'type' => TransactionType::TRANSFER,
-                'amount' => $amount,
-                'status' => TransactionStatus::COMPLETED,
-                'description' => 'Transfer',
-            ]);
+            $transaction = $this->transactionRepository
+                ->create([
+                    'from_wallet_id' => $fromWallet->id,
+                    'to_wallet_id' => $toWallet->id,
+                    'type' => TransactionType::TRANSFER,
+                    'amount' => $amount,
+                    'status' => TransactionStatus::COMPLETED,
+                    'description' => 'Transfer',
+                ]);
 
-            TransactionDetail::create([
-                'transaction_id' => $transaction->id,
-                'balance_before' => $balanceBefore,
-                'balance_after' => $fromWallet->balance,
-            ]);
+            $this->transactionDetailRepository
+                ->create([
+                    'transaction_id' => $transaction->id,
+                    'balance_before' => $balanceBefore,
+                    'balance_after' => $fromWallet->balance,
+                ]);
 
             return $transaction;
         });
@@ -81,9 +92,14 @@ class TransactionService implements TransactionServiceInterface
             $reversedBy,
             $reason
         ) {
-            $transaction = Transaction::query()
-                ->with('reversal')
-                ->findOrFail($transactionId);
+            $transaction = $this->transactionRepository
+                ->findByIdWithReversal($transactionId);
+
+            if (! $transaction) {
+                throw new DomainException(
+                    'Transaction not found.'
+                );
+            }
 
             if ($transaction->reversal) {
                 throw new DomainException(
@@ -91,9 +107,10 @@ class TransactionService implements TransactionServiceInterface
                 );
             }
 
-            $receiverWallet = Wallet::query()
-                ->lockForUpdate()
-                ->findOrFail($transaction->to_wallet_id);
+            $receiverWallet = $this->walletRepository
+                ->findForUpdate(
+                    $transaction->to_wallet_id
+                );
 
             if ($receiverWallet->user_id !== $reversedBy) {
                 throw new DomainException(
@@ -110,43 +127,53 @@ class TransactionService implements TransactionServiceInterface
             if (
                 $transaction->type === TransactionType::DEPOSIT
             ) {
-                $receiverWallet->decrement(
-                    'balance',
-                    $transaction->amount
-                );
+                $this->walletRepository
+                    ->decrementBalance(
+                        $receiverWallet,
+                        $transaction->amount
+                    );
             }
 
             if (
                 $transaction->type === TransactionType::TRANSFER
             ) {
-                $fromWallet = Wallet::query()
-                    ->lockForUpdate()
-                    ->findOrFail(
+                $fromWallet = $this->walletRepository
+                    ->findForUpdate(
                         $transaction->from_wallet_id
                     );
 
-                $receiverWallet->decrement(
-                    'balance',
-                    $transaction->amount
-                );
+                $this->walletRepository
+                    ->decrementBalance(
+                        $receiverWallet,
+                        $transaction->amount
+                    );
 
-                $fromWallet->increment(
-                    'balance',
-                    $transaction->amount
-                );
+                $this->walletRepository
+                    ->incrementBalance(
+                        $fromWallet,
+                        $transaction->amount
+                    );
             }
 
-            TransactionReversal::create([
-                'transaction_id' => $transaction->id,
-                'reversed_by' => $reversedBy,
-                'reason' => $reason,
-            ]);
+            $this->transactionReversalRepository
+                ->create([
+                    'transaction_id' => $transaction->id,
+                    'reversed_by' => $reversedBy,
+                    'reason' => $reason,
+                ]);
 
-            $transaction->update([
-                'status' => TransactionStatus::REVERSED,
-            ]);
+            $this->transactionRepository
+                ->updateStatus(
+                    $transaction,
+                    TransactionStatus::REVERSED
+                );
 
-            return $transaction->fresh();
+            return $transaction->fresh([
+                'detail',
+                'reversal',
+                'fromWallet',
+                'toWallet',
+            ]);
         });
     }
 }
