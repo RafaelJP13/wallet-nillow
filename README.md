@@ -49,6 +49,15 @@ cd wallet-nillow
 
 ### Use o CLI do WSL2 para os próximos comandos
 
+### Instalar dependências
+
+```bash
+composer install
+./vendor/bin/sail npm install
+
+```
+---
+
 ### Suba o ambiente
 
 ```bash
@@ -68,17 +77,6 @@ DB_PORT=3306
 DB_DATABASE=teste
 DB_USERNAME=teste
 DB_PASSWORD=teste
-```
-
-### Instalar dependências
-
-```bash
-composer install
-```
-### Instale e compile os assets
-
-```bash
-./vendor/bin/sail npm install
 ```
 
 ---
