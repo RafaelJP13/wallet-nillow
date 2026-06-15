@@ -24,8 +24,8 @@ return new class extends Migration
             $table->string('reason')
                 ->nullable();
 
-            $table->timestamp('created_at')
-                ->useCurrent();
+            $table->timestamps();
+
         });
     }
 

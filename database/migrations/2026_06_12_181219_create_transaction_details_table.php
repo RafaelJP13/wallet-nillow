@@ -20,8 +20,8 @@ return new class extends Migration
 
             $table->decimal('balance_after', 15, 2);
 
-            $table->timestamp('created_at')
-                ->useCurrent();
+            $table->timestamps();
+
         });
     }
 
