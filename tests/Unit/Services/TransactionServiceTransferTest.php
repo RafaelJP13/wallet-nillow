@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Services;
 
+use App\Exceptions\Domain\InsufficientFundsException;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\TransactionService;
-use DomainException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,11 +18,9 @@ class TransactionServiceTransferTest extends TestCase
         $sender = User::factory()->create();
         $receiver = User::factory()->create();
 
-        // usa wallet criada automaticamente pelo Observer
         $senderWallet = $sender->wallet;
         $receiverWallet = $receiver->wallet;
 
-        // estado controlado do teste
         $senderWallet->update(['balance' => 500]);
         $receiverWallet->update(['balance' => 100]);
 
@@ -56,17 +54,15 @@ class TransactionServiceTransferTest extends TestCase
     public function test_should_not_transfer_when_balance_is_insufficient(): void
     {
         $this->expectException(
-            \DomainException::class
+            InsufficientFundsException::class
         );
 
         $sender = User::factory()->create();
         $receiver = User::factory()->create();
 
-        // usa wallet do Observer (sem duplicar insert)
         $senderWallet = $sender->wallet;
         $receiverWallet = $receiver->wallet;
 
-        // estado controlado
         $senderWallet->update(['balance' => 50]);
         $receiverWallet->update(['balance' => 0]);
 

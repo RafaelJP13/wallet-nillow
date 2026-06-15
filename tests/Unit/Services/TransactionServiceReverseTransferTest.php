@@ -2,9 +2,10 @@
 
 namespace Tests\Unit\Services;
 
+use App\Exceptions\Domain\InsufficientReceivedBalanceException;
+use App\Exceptions\Domain\UnauthorizedTransactionException;
 use App\Models\User;
 use App\Services\TransactionService;
-use DomainException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -17,11 +18,9 @@ class TransactionServiceReverseTransferTest extends TestCase
         $sender = User::factory()->create();
         $receiver = User::factory()->create();
 
-        // usa wallets criadas pelo Observer (evita duplicação e erro UNIQUE)
         $senderWallet = $sender->wallet;
         $receiverWallet = $receiver->wallet;
 
-        // estado inicial controlado
         $senderWallet->update(['balance' => 1000]);
         $receiverWallet->update(['balance' => 0]);
 
@@ -72,7 +71,9 @@ class TransactionServiceReverseTransferTest extends TestCase
             amount: 200
         );
 
-        $this->expectException(DomainException::class);
+        $this->expectException(
+            UnauthorizedTransactionException::class
+        );
 
         $service->reverse(
             transactionId: $transaction->id,
@@ -102,7 +103,9 @@ class TransactionServiceReverseTransferTest extends TestCase
 
         $receiverWallet->update(['balance' => 50]);
 
-        $this->expectException(DomainException::class);
+        $this->expectException(
+            InsufficientReceivedBalanceException::class
+        );
 
         $service->reverse(
             transactionId: $transaction->id,

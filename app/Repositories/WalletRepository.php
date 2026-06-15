@@ -19,11 +19,11 @@ class WalletRepository implements WalletRepositoryInterface
             ->first();
     }
 
-    public function findForUpdate(int $id): Wallet
+    public function findForUpdate(int $id): ?Wallet
     {
         return Wallet::query()
             ->lockForUpdate()
-            ->findOrFail($id);
+            ->find($id);
     }
 
     public function incrementBalance(

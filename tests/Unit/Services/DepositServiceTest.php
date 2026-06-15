@@ -4,11 +4,12 @@ namespace Tests\Unit\Services;
 
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
+use App\Exceptions\Domain\InvalidAmountException;
+use App\Exceptions\Domain\WalletNotFoundException;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
 use App\Models\User;
 use App\Services\DepositService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -61,7 +62,7 @@ class DepositServiceTest extends TestCase
             'type' => TransactionType::DEPOSIT,
             'amount' => 100,
             'status' => TransactionStatus::COMPLETED,
-            'description' => 'Deposit',
+            'description' => TransactionType::DEPOSIT->value,
         ]);
 
         $this->assertEquals(
@@ -80,7 +81,7 @@ class DepositServiceTest extends TestCase
         );
 
         $this->assertEquals(
-            'Deposit',
+            TransactionType::DEPOSIT->value,
             $transaction->description
         );
     }
@@ -169,13 +170,28 @@ class DepositServiceTest extends TestCase
     public function test_should_throw_exception_when_wallet_not_found(): void
     {
         $this->expectException(
-            ModelNotFoundException::class
+            WalletNotFoundException::class
         );
 
         app(DepositService::class)
             ->execute(
                 walletId: 999999,
                 amount: 100
+            );
+    }
+
+    public function test_should_throw_exception_when_amount_is_invalid(): void
+    {
+        $user = User::factory()->create();
+
+        $this->expectException(
+            InvalidAmountException::class
+        );
+
+        app(DepositService::class)
+            ->execute(
+                walletId: $user->wallet->id,
+                amount: 0
             );
     }
 

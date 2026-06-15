@@ -3,10 +3,13 @@
 namespace Tests\Unit\Services;
 
 use App\Enums\TransactionStatus;
+use App\Exceptions\Domain\InsufficientReceivedBalanceException;
+use App\Exceptions\Domain\TransactionAlreadyReversedException;
+use App\Exceptions\Domain\TransactionNotFoundException;
+use App\Exceptions\Domain\UnauthorizedTransactionException;
 use App\Models\User;
 use App\Services\DepositService;
 use App\Services\TransactionService;
-use DomainException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -117,7 +120,9 @@ class TransactionServiceReverseDepositTest extends TestCase
                 reason: 'Erro'
             );
 
-        $this->expectException(DomainException::class);
+        $this->expectException(
+            TransactionAlreadyReversedException::class
+        );
 
         app(TransactionService::class)
             ->reverse(
@@ -138,7 +143,9 @@ class TransactionServiceReverseDepositTest extends TestCase
                 amount: 100
             );
 
-        $this->expectException(DomainException::class);
+        $this->expectException(
+            UnauthorizedTransactionException::class
+        );
 
         app(TransactionService::class)
             ->reverse(
@@ -150,9 +157,8 @@ class TransactionServiceReverseDepositTest extends TestCase
 
     public function test_should_throw_exception_when_transaction_not_found(): void
     {
-        $this->expectException(DomainException::class);
-        $this->expectExceptionMessage(
-            'Transaction not found.'
+        $this->expectException(
+            TransactionNotFoundException::class
         );
 
         app(TransactionService::class)
@@ -217,9 +223,8 @@ class TransactionServiceReverseDepositTest extends TestCase
             'balance' => 50,
         ]);
 
-        $this->expectException(DomainException::class);
-        $this->expectExceptionMessage(
-            'Saldo recebido insuficiente para reverter esta transação.'
+        $this->expectException(
+            InsufficientReceivedBalanceException::class
         );
 
         app(TransactionService::class)

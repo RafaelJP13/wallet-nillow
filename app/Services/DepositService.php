@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
+use App\Exceptions\Domain\InvalidAmountException;
+use App\Exceptions\Domain\WalletNotFoundException;
 use App\Models\Transaction;
 use App\Repositories\Contracts\TransactionDetailRepositoryInterface;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
@@ -28,13 +30,24 @@ class DepositService implements DepositServiceInterface
             $walletId,
             $amount
         ) {
+            if ($amount <= 0) {
+                throw new InvalidAmountException();
+            }
+
             $wallet = $this->walletRepository
                 ->findForUpdate($walletId);
+
+            if (! $wallet) {
+                throw new WalletNotFoundException();
+            }
 
             $balanceBefore = $wallet->balance;
 
             $this->walletRepository
-                ->incrementBalance($wallet, $amount);
+                ->incrementBalance(
+                    $wallet,
+                    $amount
+                );
 
             $wallet->refresh();
 
@@ -44,7 +57,7 @@ class DepositService implements DepositServiceInterface
                     'type' => TransactionType::DEPOSIT,
                     'amount' => $amount,
                     'status' => TransactionStatus::COMPLETED,
-                    'description' => 'Deposit',
+                    'description' => TransactionType::DEPOSIT->value,
                 ]);
 
             $this->transactionDetailRepository
@@ -54,7 +67,10 @@ class DepositService implements DepositServiceInterface
                     'balance_after' => $wallet->balance,
                 ]);
 
-            return $transaction;
+            return $transaction->fresh([
+                'detail',
+                'toWallet',
+            ]);
         });
     }
 }

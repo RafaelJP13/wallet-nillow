@@ -4,13 +4,17 @@ namespace App\Services;
 
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
+use App\Exceptions\Domain\InsufficientFundsException;
+use App\Exceptions\Domain\InsufficientReceivedBalanceException;
+use App\Exceptions\Domain\TransactionAlreadyReversedException;
+use App\Exceptions\Domain\TransactionNotFoundException;
+use App\Exceptions\Domain\UnauthorizedTransactionException;
 use App\Models\Transaction;
 use App\Repositories\Contracts\TransactionDetailRepositoryInterface;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Repositories\Contracts\TransactionReversalRepositoryInterface;
 use App\Repositories\Contracts\WalletRepositoryInterface;
 use App\Services\Contracts\TransactionServiceInterface;
-use DomainException;
 use Illuminate\Support\Facades\DB;
 
 class TransactionService implements TransactionServiceInterface
@@ -40,9 +44,7 @@ class TransactionService implements TransactionServiceInterface
                 ->findForUpdate($toWalletId);
 
             if ($fromWallet->balance < $amount) {
-                throw new DomainException(
-                    'Saldo Insuficiente para realizar a transferência.'
-                );
+                throw new InsufficientFundsException();
             }
 
             $balanceBefore = $fromWallet->balance;
@@ -68,7 +70,7 @@ class TransactionService implements TransactionServiceInterface
                     'type' => TransactionType::TRANSFER,
                     'amount' => $amount,
                     'status' => TransactionStatus::COMPLETED,
-                    'description' => TransactionType::TRANSFER,
+                    'description' => TransactionType::TRANSFER->value,
                 ]);
 
             $this->transactionDetailRepository
@@ -96,15 +98,11 @@ class TransactionService implements TransactionServiceInterface
                 ->findByIdWithReversal($transactionId);
 
             if (! $transaction) {
-                throw new DomainException(
-                    'Transaction not found.'
-                );
+                throw new TransactionNotFoundException();
             }
 
             if ($transaction->reversal) {
-                throw new DomainException(
-                    'Transação já foi revertida.'
-                );
+                throw new TransactionAlreadyReversedException();
             }
 
             $receiverWallet = $this->walletRepository
@@ -113,15 +111,11 @@ class TransactionService implements TransactionServiceInterface
                 );
 
             if ($receiverWallet->user_id !== $reversedBy) {
-                throw new DomainException(
-                    'Apenas o destinatário da transação pode fazer a reversão.'
-                );
+                throw new UnauthorizedTransactionException();
             }
 
             if ($receiverWallet->balance < $transaction->amount) {
-                throw new DomainException(
-                    'Saldo recebido insuficiente para reverter esta transação.'
-                );
+                throw new InsufficientReceivedBalanceException();
             }
 
             if (
