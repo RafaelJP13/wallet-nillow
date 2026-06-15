@@ -36,7 +36,7 @@ class TransactionServiceReverseTransferTest extends TestCase
         $service->reverse(
             transactionId: $transaction->id,
             reversedBy: $receiver->id,
-            reason: 'User request'
+            reason: 'Pedido do usuário'
         );
 
         $senderWallet->refresh();
@@ -107,7 +107,7 @@ class TransactionServiceReverseTransferTest extends TestCase
         $service->reverse(
             transactionId: $transaction->id,
             reversedBy: $receiver->id,
-            reason: 'User request'
+            reason: 'Pedido do usuário'
         );
     }
 }

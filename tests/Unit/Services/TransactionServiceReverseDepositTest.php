@@ -36,7 +36,7 @@ class TransactionServiceReverseDepositTest extends TestCase
             ->reverse(
                 transactionId: $transaction->id,
                 reversedBy: $user->id,
-                reason: 'Mistake'
+                reason: 'Erro'
             );
 
         $wallet->refresh();
@@ -63,13 +63,13 @@ class TransactionServiceReverseDepositTest extends TestCase
             ->reverse(
                 transactionId: $transaction->id,
                 reversedBy: $user->id,
-                reason: 'Mistake'
+                reason: 'Erro'
             );
 
         $this->assertDatabaseHas('transaction_reversals', [
             'transaction_id' => $transaction->id,
             'reversed_by' => $user->id,
-            'reason' => 'Mistake',
+            'reason' => 'Erro',
         ]);
     }
 
@@ -89,7 +89,7 @@ class TransactionServiceReverseDepositTest extends TestCase
             ->reverse(
                 transactionId: $transaction->id,
                 reversedBy: $user->id,
-                reason: 'Mistake'
+                reason: 'Erro'
             );
 
         $transaction->refresh();
@@ -116,7 +116,7 @@ class TransactionServiceReverseDepositTest extends TestCase
             ->reverse(
                 transactionId: $transaction->id,
                 reversedBy: $user->id,
-                reason: 'Mistake'
+                reason: 'Erro'
             );
 
         $this->expectException(DomainException::class);
@@ -125,7 +125,7 @@ class TransactionServiceReverseDepositTest extends TestCase
             ->reverse(
                 transactionId: $transaction->id,
                 reversedBy: $user->id,
-                reason: 'Mistake'
+                reason: 'Erro'
             );
     }
 
@@ -146,7 +146,7 @@ class TransactionServiceReverseDepositTest extends TestCase
             ->reverse(
                 transactionId: $transaction->id,
                 reversedBy: $otherUser->id,
-                reason: 'Mistake'
+                reason: 'Erro'
             );
     }
 
@@ -158,7 +158,7 @@ class TransactionServiceReverseDepositTest extends TestCase
             ->reverse(
                 transactionId: 999999,
                 reversedBy: 1,
-                reason: 'Mistake'
+                reason: 'Erro'
             );
     }
 
@@ -189,7 +189,7 @@ class TransactionServiceReverseDepositTest extends TestCase
             ->reverse(
                 transactionId: $transaction->id,
                 reversedBy: $user->id,
-                reason: 'Mistake'
+                reason: 'Erro'
             );
 
         $wallet->refresh();
