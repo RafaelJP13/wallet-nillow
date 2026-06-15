@@ -6,13 +6,12 @@ use App\Http\Controllers\DepositController;
 use App\Http\Controllers\ReversalController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\WalletController;
+use App\Livewire\Wallet\Home as WalletHome;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', WalletHome::class)->name('home');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect()->route('home');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -28,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/wallet', [WalletController::class, 'show']);
     Route::post('/deposits', [DepositController::class, 'store']);
     Route::get('/transactions', [TransactionController::class, 'index']);
-    Route::post('/transactions', [TransactionController::class, 'create']);
+    Route::post('/transactions', [TransactionController::class, 'store']);
     Route::get('/transactions/{transaction}', [TransactionController::class, 'show']);
     Route::post(
         '/transactions/{transaction}/reverse',
