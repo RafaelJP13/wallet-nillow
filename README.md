@@ -52,8 +52,8 @@ cd wallet-nillow
 ### Instalar dependências
 
 ```bash
-./vendor/bin/sail composer install
-./vendor/bin/sail npm install
+composer install
+npm install
 
 ```
 ---
