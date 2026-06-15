@@ -82,6 +82,13 @@ DB_PASSWORD=teste
 ```
 ---
 
+### Crie a chave 
+
+```bash
+ ./vendor/bin/sail artisan key:generate
+```
+---
+
 ### Rode as migrations
 
 ```bash
