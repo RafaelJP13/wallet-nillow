@@ -21,15 +21,4 @@ class TransactionRequest extends FormRequest
             'description'    => ['nullable', 'string', 'max:255'],
         ];
     }
-
-    public function messages(): array
-    {
-        return [
-            'to_wallet_id.required' => 'A carteira de destino é obrigatória.',
-            'to_wallet_id.exists' => 'A carteira de destino não existe.',
-            'amount.required' => 'O valor é obrigatório.',
-            'amount.min' => 'O valor mínimo é 0.01.',
-            'type.in' => 'O tipo de transação é inválido.',
-        ];
-    }
 }

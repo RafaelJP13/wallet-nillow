@@ -18,6 +18,7 @@
     "require-dev": {
         "dedoc/scramble": "^0.13.27",
         "fakerphp/faker": "^1.23",
+        "laravel-lang/common": "*",
         "laravel/breeze": "^2.4",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",

@@ -18,12 +18,4 @@ class ReverseTransactionRequest extends FormRequest
             'reason' => ['nullable', 'string', 'max:255'],
         ];
     }
-
-    public function messages(): array
-    {
-        return [
-            'transaction_id.required' => 'O ID da transação é obrigatório.',
-            'transaction_id.exists' => 'A transação informada não existe.',
-        ];
-    }
 }
