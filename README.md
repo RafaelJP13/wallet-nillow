@@ -114,7 +114,7 @@ Credenciais do usuário seed:
 - **Email:** `rafael@example.com`
 - **Senha:** `password`
 
----]
+---
 
 ## Testes
 
