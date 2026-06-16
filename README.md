@@ -7,16 +7,15 @@ Carteira financeira com suporte a depósitos, transferências entre usuários e 
 ## Stack
 
 | Camada | Tecnologia |
-|---|---|
-
-| Backend |  Laravel 13 |
-| Frontend | Livewire  Tailwind CSS |
+|--------|-------------|
+| Backend | Laravel 13 |
+| Infra | Laravel Sail |
+| Frontend | Livewire + Tailwind CSS |
 | Autenticação | Laravel Breeze + Sanctum |
 | Banco de dados | MySQL (dev/test) |
 | Observabilidade | Laravel Telescope |
 | Documentação | Scramble (OpenAPI) |
-| Ambiente | Laravel Sail (Docker) |
-| Testes | PHPUnit  |
+| Testes | PHPUnit |
 
 ---
 
