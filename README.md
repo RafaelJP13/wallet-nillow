@@ -10,7 +10,6 @@ Carteira financeira com suporte a depósitos, transferências entre usuários e 
 |---|---|
 
 | Backend |  Laravel 13 |
-| Infra | Laravel Sail |
 | Frontend | Livewire  Tailwind CSS |
 | Autenticação | Laravel Breeze + Sanctum |
 | Banco de dados | MySQL (dev/test) |
