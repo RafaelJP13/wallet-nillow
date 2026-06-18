@@ -1,4 +1,4 @@
-# Wallet — Desafio Técnico 
+# Wallet - Nillow
 
 Carteira financeira com suporte a depósitos, transferências entre usuários e reversão de transações. Construída com **Laravel 13**, **Livewire** e **Laravel Sanctum**, com observabilidade via **Laravel Telescope** e documentação de API gerada automaticamente pelo **Scramble** abstração do **Laravel OpenAPI**.
 
